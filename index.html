@@ -46,6 +46,22 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 440px; text-align: center;
         }
 
+        /* Container de anúncio blindado contra transbordamento */
+        .ad-container {
+            width: 100%;
+            max-width: 440px; /* Mesma largura do seu quiz-card */
+            margin: 20px auto;
+            padding: 0 15px; /* Margem de segurança para não encostar na borda da tela */
+            display: flex;
+            justify-content: center;
+            overflow: hidden; /* Garante que nada saia para fora */
+        }
+
+        .ad-container ins {
+            max-width: 100% !important; /* Força o AdSense a respeitar o container */
+            display: block !important;
+        }
+
         .quiz-main-title { font-size: 1.25rem; font-weight: 800; color: #333; margin: 0 0 10px 0; }
 
         .stats-container {
@@ -141,6 +157,18 @@
         <p id="splashMsg" style="color: #666; margin-bottom: 1rem; line-height: 1.5;"></p>
         <button class="splash-btn" onclick="closeSplash()">OK</button>
     </div>
+</div>
+
+<div class="ad-container">
+    <!-- Bloco de Anúncios Google AdSense -->
+    <!-- Use preferencialmente o formato "Responsivo" no painel do AdSense -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
 <script>
