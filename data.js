@@ -15,7 +15,7 @@ const allDataPools = {
         ["Cloth", "Clod"],
         ["Breath", "Bread"],
         ["Earth", "Earn"],
-        ["Month", "Mund"],
+        ["Month", "Munch"],
         ["Worth", "Word"],
         ["North", "Nod"],
         ["School", "Skull"],
