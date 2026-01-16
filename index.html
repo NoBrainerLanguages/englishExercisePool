@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NoBrainer Languages | Quiz de Pronúncia</title>
+    <script src="data.js"></script>
+    <style>
+        :root {
+            --primary: #6200ee;
+            --primary-dark: #3700b3;
+            --success: #4caf50;
+            --error: #f44336;
+            --bg: #f0f2f5;
+            --accent-green: #e8f5e9;
+            --border-green: #a5d6a7;
+            --header-height: 100px;
+        }
+
+        * { box-sizing: border-box; }
+        
+        html, body {
+            margin: 0; padding: 0; width: 100%; overflow-x: hidden;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg); display: flex; flex-direction: column; 
+            align-items: center; min-height: 100vh; padding-top: var(--header-height);
+        }
+
+        .site-header {
+            width: 100%; height: var(--header-height); background: white;
+            display: flex; justify-content: center; align-items: center;
+            position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            padding: 0 15px;
+        }
+
+        .logo-container { width: 100%; max-width: 300px; display: flex; justify-content: center; }
+        .logo-container img { max-width: 100%; height: auto; max-height: 70px; object-fit: contain; }
+
+        .main-content { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; padding: 20px 15px; }
+        
+        .quiz-card { 
+            background: white; padding: 2rem 1.5rem; border-radius: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 440px; text-align: center;
+        }
+
+        .quiz-main-title { font-size: 1.25rem; font-weight: 800; color: #333; margin: 0 0 10px 0; }
+
+        .stats-container {
+            display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+            margin-bottom: 15px; font-size: 0.85rem; font-weight: 700; color: #555;
+            background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 12px;
+        }
+
+        .instructions-list { 
+            text-align: left; background: #f8f9fa; padding: 15px; border-radius: 15px; 
+            margin-bottom: 20px; font-size: 0.85rem; color: #666; line-height: 1.4;
+        }
+
+        .selector-wrapper {
+            background-color: var(--accent-green); padding: 12px; border-radius: 20px; 
+            border: 2px dashed var(--border-green); margin-bottom: 1.5rem;
+            animation: softPulse 3s ease-in-out 1; animation-fill-mode: forwards;
+        }
+        @keyframes softPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        .mode-selector { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #c8e6c9; font-size: 0.95rem; color: #2e7d32; font-weight: 600; background: white; cursor: pointer; }
+
+        .audio-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+        .audio-btn { 
+            background: var(--primary); color: white; border: none; padding: 15px 5px; border-radius: 15px; 
+            cursor: pointer; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; 
+            box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2); transition: all 0.2s;
+        }
+
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option { 
+            background: #ffffff; border: 2px solid #f0f0f0; padding: 15px; border-radius: 15px; cursor: not-allowed; 
+            text-align: left; font-size: 1.05rem; display: flex; align-items: center; transition: all 0.2s; opacity: 0.4; pointer-events: none;
+        }
+        .option.active { cursor: pointer; opacity: 1; pointer-events: auto; }
+        .option span { flex-shrink: 0; font-weight: 800; margin-right: 12px; color: var(--primary); background: #f0ebff; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+
+        .splash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px); }
+        .splash-content { background: white; padding: 2rem; border-radius: 35px; text-align: center; max-width: 380px; width: 100%; border-top: 10px solid transparent; }
+        .splash-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 15px; }
+
+        @media (max-width: 480px) { :root { --header-height: 85px; } .quiz-card { padding: 1.2rem 1rem; } .audio-btn { font-size: 0.75rem; } }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="logo-container">
+        <img src="https://nobrainerlanguages.com/images/nbl_logo_2023.svg" alt="NoBrainer Languages">
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="quiz-card">
+        <h2 class="quiz-main-title">Quiz de Pronúncias</h2>
+        
+        <div class="instructions-list">
+            <div><strong>1.</strong> Escolha o nível</div>
+            <div><strong>2.</strong> Escute o áudio para liberar as opções</div>
+            <div><strong>3.</strong> Se errar, ouça novamente para tentar de novo</div>
+        </div>
+
+        <div class="selector-wrapper">
+            <select id="modeSelect" class="mode-selector" onchange="changeMode()">
+                <option value="palavras">Palavras Soltas</option>
+                <option value="curtas">Frases Curtas</option>
+                <option value="longas">Frases Longas</option>
+            </select>
+        </div>
+
+        <div class="stats-container">
+            <span id="statCorrect">0</span> acertos / 
+            <span id="statWrong">0</span> erros - 
+            <span id="statPrecision" style="color:var(--success)">0%</span> precisão
+        </div>
+
+        <div class="audio-controls">
+            <button class="audio-btn" onclick="playAudio(1.0)"><span>🔊</span> Normal</button>
+            <button class="audio-btn" onclick="playAudio(0.2)"><span>🐢</span> Devagar</button>
+        </div>
+
+        <div class="options-container">
+            <div id="btnA" class="option" onclick="checkAnswer(0)"><span>A</span> <div id="textA">...</div></div>
+            <div id="btnB" class="option" onclick="checkAnswer(1)"><span>B</span> <div id="textB">...</div></div>
+        </div>
+    </div>
+</main>
+
+<div id="splashOverlay" class="splash-overlay">
+    <div id="splashContent" class="splash-content">
+        <span id="splashIcon" style="font-size: 4rem; display: block; margin-bottom: 10px;"></span>
+        <div id="splashTitle" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;"></div>
+        <p id="splashMsg" style="color: #666; margin-bottom: 1rem; line-height: 1.5;"></p>
+        <button class="splash-btn" onclick="closeSplash()">OK</button>
+    </div>
+</div>
+
+<script>
+    let wordPool = [];
+    let currentWord = "";
+    let correctIndex = 0;
+    let isCorrectAttempt = false;
+    let audioPlayed = false;
+    let totalCorrect = 0;
+    let totalWrong = 0;
+
+    function changeMode() {
+        const selectedMode = document.getElementById('modeSelect').value;
+        wordPool = allDataPools[selectedMode];
+        initQuiz();
+    }
+
+    function updateStats() {
+        document.getElementById('statCorrect').innerText = totalCorrect;
+        document.getElementById('statWrong').innerText = totalWrong;
+        const total = totalCorrect + totalWrong;
+        const precision = total === 0 ? 0 : Math.round((totalCorrect / total) * 100);
+        document.getElementById('statPrecision').innerText = precision + "%";
+    }
+
+    function lockOptions() {
+        audioPlayed = false;
+        document.getElementById('btnA').classList.remove('active');
+        document.getElementById('btnB').classList.remove('active');
+    }
+
+    function unlockOptions() {
+        audioPlayed = true;
+        document.getElementById('btnA').classList.add('active');
+        document.getElementById('btnB').classList.add('active');
+    }
+
+    function initQuiz() {
+        if (typeof allDataPools === 'undefined') return;
+        if (wordPool.length === 0) wordPool = allDataPools["palavras"];
+        
+        const pair = wordPool[Math.floor(Math.random() * wordPool.length)];
+        const shuffleTarget = Math.floor(Math.random() * 2);
+        currentWord = pair[shuffleTarget];
+        
+        const displayOrder = [...pair].sort(() => Math.random() - 0.5);
+        document.getElementById('textA').innerText = displayOrder[0];
+        document.getElementById('textB').innerText = displayOrder[1];
+        
+        correctIndex = displayOrder.indexOf(currentWord);
+        lockOptions();
+    }
+
+    function playAudio(speed) {
+        if (!currentWord) return;
+        unlockOptions();
+
+        const synth = window.speechSynthesis;
+        synth.cancel();
+        const utterance = new SpeechSynthesisUtterance(currentWord);
+        const voices = synth.getVoices();
+        const englishVoice = voices.find(v => v.lang.startsWith('en-'));
+        utterance.voice = englishVoice || null;
+        utterance.lang = 'en-US';
+        utterance.rate = speed; 
+        synth.speak(utterance);
+    }
+
+function checkAnswer(selectedIndex) {
+    if (!audioPlayed) return;
+
+    const overlay = document.getElementById('splashOverlay');
+    const content = document.getElementById('splashContent');
+    const icon = document.getElementById('splashIcon');
+    const title = document.getElementById('splashTitle');
+    const msg = document.getElementById('splashMsg');
+
+    const feedbackPositivo = [
+        { t: "Mandou bem!", m: "Sua percepção auditiva está ficando incrível!", i: "🚀" },
+        { t: "Perfeito!", m: "Você captou exatamente a diferença de som. Continue assim!", i: "🎯" },
+        { t: "Isso aí!", m: "Seu ouvido está treinado como o de um nativo!", i: "🎧" },
+        { t: "Excelente!", m: "Você não se deixou enganar pelo som parecido. Boa!", i: "✨" },
+        { t: "Uau!", m: "Mais um acerto para a conta. Você está evoluindo rápido!", i: "🔥" },
+        { t: "Na mosca!", m: "Essa pronúncia não é fácil, mas você tirou de letra!", i: "💎" },
+        { t: "Sensacional!", m: "Sua dedicação está dando resultados claros.", i: "👏" },
+        { t: "Boa escolha!", m: "Você identificou o som corretamente. Vamos para a próxima?", i: "✅" },
+        { t: "Incrível!", m: "Você está dominando os pares mínimos do inglês!", i: "⭐" },
+        { t: "Arrasou!", m: "Pronúncia é prática, e você está provando que praticou!", i: "🌈" }
+    ];
+
+    const feedbackErro = [
+        { t: "Quase lá!", m: "Esses sons são bem parecidos. Ouça o áudio novamente para tentar de novo!", i: "👂" },
+        { t: "Faz parte!", m: "O inglês tem dessas pegadinhas. Escute mais uma vez para liberar o botão!", i: "🔄" },
+        { t: "Não desanime!", m: "Até nativos se confundem às vezes. Ouça o áudio e tente outra vez!", i: "💪" },
+        { t: "Bateu na trave!", m: "Sua audição está quase lá. Ouça o áudio de novo e preste atenção!", i: "⚽" },
+        { t: "Vamos de novo?", m: "A prática leva à perfeição. Clique no áudio para uma nova tentativa!", i: "📚" },
+        { t: "Sutil, né?", m: "A diferença é pequena, mas você vai conseguir! Ouça o áudio agora.", i: "🔍" },
+        { t: "Sem problemas!", m: "Errar é o primeiro passo para aprender. Escute o áudio para continuar!", i: "🌱" },
+        { t: "Treino é treino!", m: "Ajuste seus ouvidos! Clique no áudio para habilitar a escolha.", i: "⚙️" },
+        { t: "Atenção total!", m: "O segredo está no detalhe. Ouça o áudio e tente identificar o som.", i: "🧠" },
+        { t: "Não foi agora!", m: "Mas a próxima é sua! Escute com calma e as opções aparecerão.", i: "⚡" }
+    ];
+
+    overlay.style.display = 'flex';
+
+    if (selectedIndex === correctIndex) {
+        totalCorrect++;
+        isCorrectAttempt = true;
+        const res = feedbackPositivo[Math.floor(Math.random() * feedbackPositivo.length)];
+        content.style.borderColor = "var(--success)";
+        icon.innerText = res.i; 
+        title.innerText = res.t; 
+        msg.innerText = res.m;
+    } else {
+        totalWrong++;
+        isCorrectAttempt = false;
+        const res = feedbackErro[Math.floor(Math.random() * feedbackErro.length)];
+        content.style.borderColor = "var(--error)";
+        icon.innerText = res.i; 
+        title.innerText = res.t; 
+        msg.innerText = res.m;
+        lockOptions(); // Força o aluno a ouvir o áudio novamente
+    }
+    
+    updateStats();
+}
+
+
+    function closeSplash() {
+        document.getElementById('splashOverlay').style.display = 'none';
+        if (isCorrectAttempt) initQuiz();
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => { if (wordPool.length === 0) changeMode(); };
+    window.onload = () => { if (window.speechSynthesis.getVoices().length > 0) changeMode(); };
+</script>
+</body>
+</html>
