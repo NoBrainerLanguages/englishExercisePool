@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NoBrainer Languages | Quiz de Pronúncia</title>
     <script src="data.js"></script>
+    <script src="soundeffects.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1471121301065072"
+     crossorigin="anonymous"></script>
+
     <style>
         :root {
             --primary: #6200ee;
@@ -46,15 +50,20 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 440px; text-align: center;
         }
 
-        /* Container de anúncio blindado contra transbordamento */
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        
         .ad-container {
             width: 100%;
-            max-width: 440px; /* Mesma largura do seu quiz-card */
-            margin: 20px auto;
-            padding: 0 15px; /* Margem de segurança para não encostar na borda da tela */
+            margin: 16px 0 0 0;
             display: flex;
             justify-content: center;
-            overflow: hidden; /* Garante que nada saia para fora */
         }
 
         .ad-container ins {
@@ -89,6 +98,14 @@
             background: var(--primary); color: white; border: none; padding: 15px 5px; border-radius: 15px; 
             cursor: pointer; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; 
             box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2); transition: all 0.2s;
+        }
+
+        .audio-btn:disabled {
+            opacity: 0.4;             
+            filter: grayscale(100%);  
+            cursor: not-allowed;      
+            pointer-events: none;     
+            box-shadow: none;
         }
 
         .options-container { display: flex; flex-direction: column; gap: 10px; }
@@ -159,7 +176,7 @@
         </div>
 
         <div class="selector-wrapper">
-            <select id="modeSelect" class="mode-selector" onchange="changeMode()">
+            <select id="modeSelect" class="mode-selector" autocomplete="off" onchange="changeMode()">
                 <option value="" disabled selected>Selecione o nível do exercício</option>
                 <option value="palavras">Palavras Soltas</option>
                 <option value="curtas">Frases Curtas</option>
@@ -174,8 +191,8 @@
         </div>
 
         <div class="audio-controls">
-            <button class="audio-btn" onclick="playAudio(1.0)"><span>🔊</span> Normal</button>
-            <button class="audio-btn" onclick="playAudio(0.2)"><span>🐢</span> Devagar</button>
+            <button class="audio-btn" disabled onclick="playAudio(1.0)"><span>🔊</span> Normal</button>
+            <button class="audio-btn" disabled onclick="playAudio(0.2)"><span>🐢</span> Devagar</button>
         </div>
 
         <div class="options-container">
@@ -187,6 +204,20 @@
         aria-label="Voltar para a página principal e escolher outro exercício">
             🔁 Quero fazer outro exercício
         </button>
+
+        <div class="ad-container">
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-1471121301065072"
+                data-ad-slot="XXXXXXXXXX"
+                
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+
     </div>
 
     
@@ -201,22 +232,12 @@
     </div>
 </div>
 
-<div class="ad-container">
-    <!-- Bloco de Anúncios Google AdSense -->
-    <!-- Use preferencialmente o formato "Responsivo" no painel do AdSense -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="XXXXXXXXXX"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
+
 
 <script>
 
     const homeButton = document.getElementsByClassName('fab-new-exercise');
-
+    
     let wordPool = [];
 
     let shuffledPool = [];
@@ -243,16 +264,31 @@
         window.location.href = "https://www.nobrainerlanguages.com";
     });
 
-    function changeMode() {
-        const selectedMode = document.getElementById('modeSelect').value;
-        wordPool = allDataPools[selectedMode];
+// Disable audio buttons
+document.querySelectorAll('.audio-btn').forEach(btn => btn.disabled = true);    
 
-        shuffledPool = shuffleArray([...wordPool]);
-        poolIndex = 0;
-        lastCorrectWord = null;
+function changeMode() {
+    const selectedMode = document.getElementById('modeSelect').value;
 
-        initQuiz();
+    // 1. STOP if the placeholder (empty string) is selected
+    if (!selectedMode) return; 
+
+    // 2. STOP if the pool exists but is empty
+    if (!allDataPools[selectedMode] || allDataPools[selectedMode].length === 0) {
+        console.error("Pool is empty or missing for:", selectedMode);
+        return;
+    } else {
+        // Enable audio buttons
+        document.querySelectorAll('.audio-btn').forEach(btn => btn.disabled = false);        
     }
+
+    wordPool = allDataPools[selectedMode];
+    shuffledPool = shuffleArray([...wordPool]);
+    poolIndex = 0;
+    lastCorrectWord = null;
+
+    initQuiz();
+}
 
     function updateStats() {
         document.getElementById('statCorrect').innerText = totalCorrect;
@@ -372,6 +408,9 @@ function checkAnswer(selectedIndex) {
         icon.innerText = res.i; 
         title.innerText = res.t; 
         msg.innerText = res.m;
+
+        playSuccessSound();
+        
     } else {
         totalWrong++;
         isCorrectAttempt = false;
@@ -381,6 +420,7 @@ function checkAnswer(selectedIndex) {
         title.innerText = res.t; 
         msg.innerText = res.m;
         lockOptions(); // Força o aluno a ouvir o áudio novamente
+        playErrorSound();
     }
     
     updateStats();
