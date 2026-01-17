@@ -173,6 +173,11 @@
 
 <script>
     let wordPool = [];
+
+    let shuffledPool = [];
+    let poolIndex = 0;
+    let lastCorrectWord = null;
+
     let currentWord = "";
     let correctIndex = 0;
     let isCorrectAttempt = false;
@@ -180,9 +185,22 @@
     let totalCorrect = 0;
     let totalWrong = 0;
 
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     function changeMode() {
         const selectedMode = document.getElementById('modeSelect').value;
         wordPool = allDataPools[selectedMode];
+
+        shuffledPool = shuffleArray([...wordPool]);
+        poolIndex = 0;
+        lastCorrectWord = null;
+
         initQuiz();
     }
 
@@ -206,21 +224,43 @@
         document.getElementById('btnB').classList.add('active');
     }
 
-    function initQuiz() {
-        if (typeof allDataPools === 'undefined') return;
-        if (wordPool.length === 0) wordPool = allDataPools["palavras"];
-        
-        const pair = wordPool[Math.floor(Math.random() * wordPool.length)];
-        const shuffleTarget = Math.floor(Math.random() * 2);
-        currentWord = pair[shuffleTarget];
-        
-        const displayOrder = [...pair].sort(() => Math.random() - 0.5);
-        document.getElementById('textA').innerText = displayOrder[0];
-        document.getElementById('textB').innerText = displayOrder[1];
-        
-        correctIndex = displayOrder.indexOf(currentWord);
-        lockOptions();
+function initQuiz() {
+    if (!shuffledPool.length) return;
+
+    // If we reached the end, reshuffle silently
+    if (poolIndex >= shuffledPool.length) {
+        shuffledPool = shuffleArray([...shuffledPool]);
+        poolIndex = 0;
     }
+
+    let pair;
+    let attempts = 0;
+
+    // Avoid repeating the same correct answer
+    do {
+        pair = shuffledPool[poolIndex];
+        poolIndex++;
+        attempts++;
+
+        // Safety net (small pools)
+        if (attempts > shuffledPool.length) break;
+
+    } while (pair.includes(lastCorrectWord));
+
+    // Randomly choose which word is correct
+    const correctWordIndex = Math.floor(Math.random() * 2);
+    currentWord = pair[correctWordIndex];
+    lastCorrectWord = currentWord;
+
+    // Shuffle display order (A/B)
+    const displayOrder = shuffleArray([...pair]);
+    document.getElementById('textA').innerText = displayOrder[0];
+    document.getElementById('textB').innerText = displayOrder[1];
+
+    correctIndex = displayOrder.indexOf(currentWord);
+    lockOptions();
+}
+
 
     function playAudio(speed) {
         if (!currentWord) return;
