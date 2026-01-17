@@ -110,6 +110,9 @@ const allDataPools = {
 
         ["Let", "Latch"],
         ["Like", "Lick"],
+        ["Listen", "List"],
+        ["Listen", "Listing"],
+        ["Loosen", "Listen"],
         ["Loosen", "Loose"],
         ["Lose", "Lousy"],
         ["Lost", "Last"],
