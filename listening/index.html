@@ -104,6 +104,39 @@
         .splash-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 15px; }
 
         @media (max-width: 480px) { :root { --header-height: 85px; } .quiz-card { padding: 1.2rem 1rem; } .audio-btn { font-size: 0.75rem; } }
+    
+
+.fab-new-exercise {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 22px;
+    margin-top: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(98, 0, 238, 0.35);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fab-new-exercise:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(98, 0, 238, 0.45);
+}
+
+@media (max-width: 480px) {
+    .below-card-nav {
+        margin-top: 10px;
+    }
+
+    .fab-new-exercise {
+        font-size: 0.75rem;
+        padding: 12px 18px;
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -113,6 +146,7 @@
         <img src="https://nobrainerlanguages.com/images/nbl_logo_2023.svg" alt="NoBrainer Languages">
     </div>
 </header>
+
 
 <main class="main-content">
     <div class="quiz-card">
@@ -126,6 +160,7 @@
 
         <div class="selector-wrapper">
             <select id="modeSelect" class="mode-selector" onchange="changeMode()">
+                <option value="" disabled selected>Selecione o nível do exercício</option>
                 <option value="palavras">Palavras Soltas</option>
                 <option value="curtas">Frases Curtas</option>
                 <option value="longas">Frases Longas</option>
@@ -147,7 +182,14 @@
             <div id="btnA" class="option" onclick="checkAnswer(0)"><span>A</span> <div id="textA">...</div></div>
             <div id="btnB" class="option" onclick="checkAnswer(1)"><span>B</span> <div id="textB">...</div></div>
         </div>
+        <button
+        class="fab-new-exercise"
+        aria-label="Voltar para a página principal e escolher outro exercício">
+            🔁 Quero fazer outro exercício
+        </button>
     </div>
+
+    
 </main>
 
 <div id="splashOverlay" class="splash-overlay">
@@ -172,6 +214,9 @@
 </div>
 
 <script>
+
+    const homeButton = document.getElementsByClassName('fab-new-exercise');
+
     let wordPool = [];
 
     let shuffledPool = [];
@@ -192,6 +237,11 @@
         }
         return array;
     }
+
+
+    homeButton[0].addEventListener('click', () => {
+        window.location.href = "https://www.nobrainerlanguages.com";
+    });
 
     function changeMode() {
         const selectedMode = document.getElementById('modeSelect').value;
