@@ -53,22 +53,18 @@
         .quiz-wrapper {
             width: 100%;
             max-width: 440px;
+            min-width: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        
         .ad-container {
             width: 100%;
             margin: 16px 0 0 0;
             display: flex;
             justify-content: center;
-        }
-
-        .ad-container ins {
-            max-width: 100% !important; /* Força o AdSense a respeitar o container */
-            display: block !important;
+            min-width: 280px; /* 🔑 prevents zero-width */
         }
 
         .quiz-main-title { font-size: 1.25rem; font-weight: 800; color: #333; margin: 0 0 10px 0; }
@@ -166,7 +162,9 @@
 
 
 <main class="main-content">
-    <div class="quiz-card">
+    <div class="quiz-wrapper">
+
+        <div class="quiz-card">
         <h2 class="quiz-main-title">Quiz de Pronúncias</h2>
         
         <div class="instructions-list">
@@ -214,10 +212,11 @@
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
 
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <!--<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>-->
         </div>
 
 
+    </div>
     </div>
 
     
